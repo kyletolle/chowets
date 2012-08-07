@@ -4,8 +4,8 @@ EventMachine.run {
   # Chat is only useful with multiple people.
   @chatters = []
 
-  # Start listening for websocket connections on port 8080
-  EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 8080) do |socket|
+  # Start listening for websocket connections
+  EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 3939) do |socket|
     # When the websocket is opened.
     socket.onopen {
       @chatters << socket

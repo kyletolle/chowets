@@ -1,5 +1,8 @@
+<!doctype html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <title>Chowets</title>
     <script src="./jquery-1.7.2.min.js"></script>
     <script>
       $(document).ready(function(){
@@ -7,7 +10,7 @@
         function debug(str){ $("#debug").append("<p>"+str+"</p>"); };
 
         // Open a websocket to the server.
-        ws = new WebSocket("ws://localhost:8080");
+        ws = new WebSocket("ws://chowets.nullsix.com:3939");
 
         // When the websocket is opened.
         ws.onopen = function() {
