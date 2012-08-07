@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <script src="./jquery-1.7.2.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        // Make it easy to write diagnostic messages.
+        function debug(str){ $("#debug").append("<p>"+str+"</p>"); };
+
+        // Open a websocket to the server.
+        ws = new WebSocket("ws://localhost:8080");
+
+        // When the websocket is opened.
+        ws.onopen = function() {
+        };
+
+        // When the websocket receives a message.
+        ws.onmessage = function(evt) {
+          $("#data").append("<p>"+evt.data+"</p>");
+        };
+
+        // When the websocket is closed.
+        ws.onclose = function() { debug("Connection closed"); };
+
+        // Attach an event to the text box and place the cursor there too.
+        $("#msg").keydown(submit).focus();
+
+      });
+
+      // Handle keypresses.
+      var submit = function(evt) {
+        // When the user hits <Enter>.
+        if (evt.keyCode == 13) {
+          var msg = $("#msg");
+          // Send the contents to the server.
+          ws.send(msg.val());
+          // And clear the text.
+          msg.val("");
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Chat over WebSockets</h1>
+    <h2>Chat log...</h2>
+    <div id="data"></div>
+    <input type="text" id="msg"></input>
+    <br />
+    <h4>Debug</h4>
+    <div id="debug"></div>
+  </body>
+</html>
