@@ -1,9 +1,9 @@
 # Chat over Websockets
 
 ## Dependencies
-`rvm gemset create chowets`
-`rvm gemset use chowets`
-`gem install em-websocket`
+`rvm gemset create chowets`  
+`rvm gemset use chowets`  
+`gem install em-websocket`  
 
 ## Usage
 ### From the command line
@@ -12,5 +12,5 @@
 ### From the browser
 `file:///path/to/chowets/index.html`
 
-Type text into the textbox and hit enter to see the message sent back from the
-server. Have multiple people join to see it work in real-time!
+Type text into the textbox and hit enter to see the message sent back  
+from the server. Have multiple people join to see it work in real-time!
