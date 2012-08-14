@@ -1,5 +1,6 @@
 require 'em-websocket'
 require './messages'
+require './chatter'
 
 EventMachine.run {
   # Chat is only useful with multiple people.
@@ -14,8 +15,11 @@ EventMachine.run {
   EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 3939) do |socket|
     # When the websocket is opened.
     socket.onopen {
+      # Create a chatter
+      @chatter = Chatter.new(socket: socket, number: @chatters.size+1)
+
       # Keep track of this chatter.
-      @chatters << socket
+      @chatters << @chatter
 
       ## Spit out the last few messages.
       # Range of recent messages we want to see.
@@ -33,7 +37,7 @@ EventMachine.run {
         next if recent_msg.nil?
 
         # Otherwise send the message to the chatter.
-        socket.send recent_msg
+        @chatter.socket.send recent_msg
       end
     }
 
@@ -41,12 +45,13 @@ EventMachine.run {
     socket.onmessage { |data|
       # Keep this in the list of recent messages, the index is adjusted since
       # we're only keeping a small number of messages around.
-      @messages[@messages.count % NUM_RECENT_MESSAGES] = data
+      message = "#{@chatter.name}: #{data}"
+      @messages[@messages.count % NUM_RECENT_MESSAGES] = message
       @messages.count += 1
 
       # Send the message to each chatter.
-      @chatters.each do |c|
-        c.send data
+      @chatters.each do |chatter|
+        chatter.socket.send message
       end
     }
 
