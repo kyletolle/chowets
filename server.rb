@@ -1,3 +1,4 @@
+require 'htmlentities'
 require 'em-websocket'
 require './messages'
 require './chatter'
@@ -45,7 +46,8 @@ EventMachine.run {
     socket.onmessage { |data|
       # Keep this in the list of recent messages, the index is adjusted since
       # we're only keeping a small number of messages around.
-      message = "#{@chatter.name}: #{data}"
+      escaped_data = HTMLEntities.new.encode(data)
+      message = "#{@chatter.name}: #{escaped_data}"
       @messages[@messages.count % NUM_RECENT_MESSAGES] = message
       @messages.count += 1
 
