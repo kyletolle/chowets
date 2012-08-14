@@ -3,7 +3,7 @@
 ## Dependencies
 `rvm gemset create chowets`  
 `rvm gemset use chowets`  
-`gem install em-websocket`  
+`bundle install`
 
 ## Usage
 ### From the command line
