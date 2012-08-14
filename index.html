@@ -5,9 +5,10 @@
     <title>Chowets</title>
     <script src="./jquery-1.7.2.min.js"></script>
     <script>
+      function debug(str){ $("#debug").append("<p>"+str+"</p>"); };
+
       $(document).ready(function(){
         // Make it easy to write diagnostic messages.
-        function debug(str){ $("#debug").append("<p>"+str+"</p>"); };
 
         // Open a websocket to the server.
         ws = new WebSocket("ws://chowets.nullsix.com:3939");
@@ -19,6 +20,7 @@
         // When the websocket receives a message.
         ws.onmessage = function(evt) {
           $("#data").append("<p>"+evt.data+"</p>");
+          $("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, "fast");
         };
 
         // When the websocket is closed.
