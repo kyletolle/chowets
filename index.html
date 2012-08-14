@@ -20,6 +20,7 @@
         // When the websocket receives a message.
         ws.onmessage = function(evt) {
           $("#data").append("<p>"+evt.data+"</p>");
+          $("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, "fast");
         };
 
         // When the websocket is closed.
