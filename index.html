@@ -19,8 +19,12 @@
 
         // When the websocket receives a message.
         ws.onmessage = function(evt) {
+          // Add the message to the end of the list.
           $("#data").append("<p>"+evt.data+"</p>");
-          $(window).scrollTop($("p").last().position().top);
+
+          // Scroll down to keep the text box on the page.
+          var msg_box_top = $("#msg").position().top;
+          $(window).scrollTop(msg_box_top);
         };
 
         // When the websocket is closed.
