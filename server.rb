@@ -1,26 +1,71 @@
 require 'htmlentities'
 require 'em-websocket'
+require 'json'
 require './messages'
 require './chatter'
 
 EventMachine.run {
   # Chat is only useful with multiple people.
-  @chatters = []
+  @chatters = {}
   # Keep a list of messages
   @messages = Messages.new
 
   # The number of recent messages we're interested in.
   NUM_RECENT_MESSAGES = 10
 
+  def on_chat(chatter, text)
+    # Keep this in the list of recent messages, the index is adjusted since
+    # we're only keeping a small number of messages around.
+    escaped_text = HTMLEntities.new.encode(text)
+    message = "#{chatter.name}: #{escaped_text}"
+    @messages[@messages.count % NUM_RECENT_MESSAGES] = message
+    @messages.count += 1
+
+    # Send the message to each chatter.
+    @chatters.each do |key, val|
+      create_json message
+      val.socket.send create_json(message)
+    end
+  end
+
+  def on_name(chatter, username)
+    chatter.name = username
+  end
+
+  #TODO
+  def process_message(data)
+    message = JSON.parse(data)
+    id = message['id']
+    action = message['action']
+
+    chatter = @chatters[id]
+    if action == 'set_username'
+      on_name(chatter, message['username'])
+    else
+      on_chat(chatter, message['text'])
+    end
+  end
+
+  def create_json(data)
+    { text: data}.to_json
+  end
+
   # Start listening for websocket connections
   EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 3939) do |socket|
     # When the websocket is opened.
     socket.onopen {
       # Create a chatter
-      @chatter = Chatter.new(socket: socket, number: @chatters.size+1)
+      chatter = Chatter.new(socket)
 
       # Keep track of this chatter.
-      @chatters << @chatter
+      @chatters[chatter.id] = chatter
+
+      id_msg = {
+        action: :set_id,
+        id: chatter.id
+      }
+      chatter.socket.send id_msg.to_json
+      #TODO: Need to send a message to the user so they have their ID.
 
       ## Spit out the last few messages.
       # Range of recent messages we want to see.
@@ -38,23 +83,13 @@ EventMachine.run {
         next if recent_msg.nil?
 
         # Otherwise send the message to the chatter.
-        @chatter.socket.send recent_msg
+        chatter.socket.send create_json(recent_msg)
       end
     }
 
     # When the websocket receives a message.
     socket.onmessage { |data|
-      # Keep this in the list of recent messages, the index is adjusted since
-      # we're only keeping a small number of messages around.
-      escaped_data = HTMLEntities.new.encode(data)
-      message = "#{@chatter.name}: #{escaped_data}"
-      @messages[@messages.count % NUM_RECENT_MESSAGES] = message
-      @messages.count += 1
-
-      # Send the message to each chatter.
-      @chatters.each do |chatter|
-        chatter.socket.send message
-      end
+      process_message data
     }
 
     # When the websocket is closed.
