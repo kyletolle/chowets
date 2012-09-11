@@ -14,11 +14,18 @@ $(document).ready(function(){
   $("#msg").keydown(submit);
   // Open a websocket to the server.
 
-  start_websocket();
+  try {
+    start_websocket();
+    
+  } catch (e) {
+    $("<p>Your browser doesn't support websockets.</p>").insertAfter('h1');
+    $('#set_username').hide();
+  }
+
 });
 
 function start_websocket(){
-  ws = new WebSocket("ws://localhost:3939");
+  ws = new WebSocket("ws://localhost:0");
 
   // When the websocket is opened.
   ws.onopen = function() {
