@@ -6,8 +6,6 @@ $(document).ready(function(){
   $('#username').focus();
 
   // Process the user's name when they enter it.
-  //TODO: This needs to keep track of the user so we can look it up later.
-  // Either a unique name or a number
   $('form').submit(usernameEntered);
 
   // Attach an event to the text box and place the cursor there too.
@@ -28,8 +26,7 @@ function start_websocket(){
   ws = new WebSocket("ws://localhost:3939");
 
   // When the websocket is opened.
-  ws.onopen = function() {
-  };
+  ws.onopen = function() { };
 
   // When the websocket receives a message.
   ws.onmessage = function(evt) {
@@ -41,8 +38,6 @@ function start_websocket(){
 };
 
 function process_msg(data){
-  console.log("Message");
-  console.log(data);
   message = JSON.parse(data);
 
   if (message.action == "set_id")
@@ -55,12 +50,10 @@ function process_msg(data){
 };
 
 function on_id(id){
-  console.log("ID!");
   user.id = id;
 };
 
 function on_message(text){
-  console.log("TEXT!");
   appendMsg(text);
 
   scrollToBottom();
@@ -81,8 +74,8 @@ var usernameEntered = function() {
       ws.send(json_msg);
 
       change_to_chat();
-      // Should this just be a message that disappears and we just assume that it was received by the server?
     });
+
     return false;
   };
 
