@@ -1,7 +1,7 @@
 // User object
 var user = { name: "" };
 
-$(document).ready(function(){
+$(document).ready(function() {
   // Allow the user to enter their username right away.
   $('#username').focus();
 
@@ -22,7 +22,7 @@ $(document).ready(function(){
 
 });
 
-function start_websocket(){
+function start_websocket() {
   ws = new WebSocket("ws://localhost:3939");
 
   // When the websocket is opened.
@@ -37,11 +37,10 @@ function start_websocket(){
   ws.onclose = function() { debug("Connection closed"); };
 };
 
-function process_msg(data){
+function process_msg(data) {
   message = JSON.parse(data);
 
-  if (message.action == "set_id")
-  {
+  if (message.action == "set_id") {
     on_id(message.id);
 
   } else {
@@ -49,11 +48,11 @@ function process_msg(data){
   }
 };
 
-function on_id(id){
+function on_id(id) {
   user.id = id;
 };
 
-function on_message(text){
+function on_message(text) {
   appendMsg(text);
 
   scrollToBottom();
@@ -69,7 +68,7 @@ var usernameEntered = function() {
         username: user.name
       };
 
-      json_msg = JSON.stringify(message)
+      json_msg = JSON.stringify(message);
 
       ws.send(json_msg);
 
