@@ -54,9 +54,23 @@ function on_id(id) {
 
 function on_message(text) {
   appendMsg(text);
+  
+  truncateMsgs();
 
   scrollToBottom();
 }
+
+function truncateMsgs() {
+  var numOfMsgs = $('#data').children().length;
+
+  while ($('#data').children().length > 100) {
+    var first = $('#data').children().first();
+
+    first.hide();
+    first.remove();
+  }
+}
+
 // Send the username to the server.
 var usernameEntered = function() {
     $('form').children('input[type="text"]').each(function() {
