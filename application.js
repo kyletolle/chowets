@@ -25,7 +25,7 @@ $(document).ready(function(){
 });
 
 function start_websocket(){
-  ws = new WebSocket("ws://localhost:0");
+  ws = new WebSocket("ws://localhost:3939");
 
   // When the websocket is opened.
   ws.onopen = function() {
