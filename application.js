@@ -1,13 +1,11 @@
 // User object
 var user = { name: "" };
 
-$(document).ready(function(){
+$(document).ready(function() {
   // Allow the user to enter their username right away.
   $('#username').focus();
 
   // Process the user's name when they enter it.
-  //TODO: This needs to keep track of the user so we can look it up later.
-  // Either a unique name or a number
   $('form').submit(usernameEntered);
 
   // Attach an event to the text box and place the cursor there too.
@@ -24,12 +22,11 @@ $(document).ready(function(){
 
 });
 
-function start_websocket(){
+function start_websocket() {
   ws = new WebSocket("ws://localhost:3939");
 
   // When the websocket is opened.
-  ws.onopen = function() {
-  };
+  ws.onopen = function() { };
 
   // When the websocket receives a message.
   ws.onmessage = function(evt) {
@@ -40,13 +37,10 @@ function start_websocket(){
   ws.onclose = function() { debug("Connection closed"); };
 };
 
-function process_msg(data){
-  console.log("Message");
-  console.log(data);
+function process_msg(data) {
   message = JSON.parse(data);
 
-  if (message.action == "set_id")
-  {
+  if (message.action == "set_id") {
     on_id(message.id);
 
   } else {
@@ -54,17 +48,29 @@ function process_msg(data){
   }
 };
 
-function on_id(id){
-  console.log("ID!");
+function on_id(id) {
   user.id = id;
 };
 
-function on_message(text){
-  console.log("TEXT!");
+function on_message(text) {
   appendMsg(text);
+  
+  truncateMsgs();
 
   scrollToBottom();
 }
+
+function truncateMsgs() {
+  var numOfMsgs = $('#data').children().length;
+
+  while ($('#data').children().length > 100) {
+    var first = $('#data').children().first();
+
+    first.hide();
+    first.remove();
+  }
+}
+
 // Send the username to the server.
 var usernameEntered = function() {
     $('form').children('input[type="text"]').each(function() {
@@ -76,13 +82,13 @@ var usernameEntered = function() {
         username: user.name
       };
 
-      json_msg = JSON.stringify(message)
+      json_msg = JSON.stringify(message);
 
       ws.send(json_msg);
 
       change_to_chat();
-      // Should this just be a message that disappears and we just assume that it was received by the server?
     });
+
     return false;
   };
 
